@@ -39,12 +39,19 @@ void loop()
     startConversion(v_addr[i]);        
     temp = v_meas[(i+1) % m_size];     
     if(temp < 0.0) {
-      code = (int)(-temp * 10);
-      secondSymbol = code/100;
-      thirdSymbol = code/10 - (code/100)*10;
-      if((code - (code/10)*10) > 4)
+      code = (int)(-temp * 10);    
+      if(code < 100) { // temperature higher then -10.0 but less then 0.0
+        secondSymbol = code/10;
+        thirdSymbol = code - (code/10)*10;  
+        digitalWrite(DOT_PIN, LOW);  
+      }
+      else{
+        secondSymbol = code/100;
+        thirdSymbol = code/10 - (code/100)*10;
+        if((code - (code/10)*10) > 4)
         thirdSymbol++;
-      digitalWrite(DOT_PIN, HIGH);
+        digitalWrite(DOT_PIN, HIGH);
+      }      
       for(int j = 0; j < MEASURE_DELAY; j++) {       
         updateSymbols(f_lsb, minus_msb);       
         updateSymbols(s_lsb[secondSymbol], s_msb);           
